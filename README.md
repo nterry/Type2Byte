@@ -6,7 +6,7 @@ A class for converting managed integral types to byte arrays and vice versa
 
 ###But BitConverter already exists! Why use this?
 
-A good question. BitConverter is a great class, but <b>only</b> works with the Microsoft CLR. it <b><u>does not</u></b> work with Mono.
+A good question. BitConverter is a great class, but [only works](http://www.mono-project.com/Mono_DataConvert#Problems_with_the_CLI.27s_System.BitConverter) with the Microsoft CLR. it <b><u>does not</u></b> work with Mono.
 
 
 
@@ -17,7 +17,7 @@ To [quote the guys](http://www.mono-project.com/FAQ:_Technical#Mono_Platforms) a
 
 Indeed, It is bad practice to have platform-specific code and <b>should be avoided</b> wherever possible. This library works with <b>both</b> Mono and the CLR. 
 
-In addition, it should be noted that Mono.DataConvert uses <b>UNSAFE</b> code. If you use library that is marked with unsafe code your whole project has to marked as such, and you lose all guarantees that the runtime affords to you. You might as well code it in C at this point...
+In addition, it should be noted that [Mono.DataConvert](https://raw.github.com/mono/mono/master/mcs/class/corlib/Mono/DataConverter.cs) uses <b>UNSAFE</b> code. If you use a library that is marked with unsafe code your <i>whole</i> project has to marked as such, and you lose all guarantees that the runtime affords to you. You might as well code it in C at this point...
 
 Besides, do you <i>really</i> want to have more than one dependency for the same thing?
 
