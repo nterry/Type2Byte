@@ -1,6 +1,8 @@
 Type2Byte
 =========
 
+[![Build status](https://ci.appveyor.com/api/projects/status?id=1kikr01m0cg5rpy6)](https://ci.appveyor.com/project/type2byte)
+
 A class for converting managed integral types to byte arrays and vice versa
 
 
