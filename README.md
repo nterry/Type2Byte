@@ -17,7 +17,7 @@ To [quote the guys](http://www.mono-project.com/FAQ:_Technical#Mono_Platforms) a
 
 Indeed, It is bad practice to have platform-specific code and <b>should be avoided</b> wherever possible. This library works with <b>both</b> Mono and the CLR. 
 
-In addition, it should be noted that [Mono.DataConvert](https://raw.github.com/mono/mono/master/mcs/class/corlib/Mono/DataConverter.cs) uses <b>UNSAFE</b> code. If you use a library that is marked with unsafe code your <i>whole</i> project has to marked as such, and you lose all guarantees that the runtime affords to you. You might as well code it in C at this point...
+In addition, it should be noted that [Mono.DataConvert](https://raw.github.com/mono/mono/master/mcs/class/corlib/Mono/DataConverter.cs) uses [unsafe](http://msdn.microsoft.com/en-us/library/t2yzs44b.aspx) code. If you use a library that is marked with unsafe code your <i>whole</i> project has to marked as such, and you lose all guarantees that the runtime affords to you. You might as well code it in C at this point...
 
 Besides, do you <i>really</i> want to have more than one dependency for the same thing?
 
