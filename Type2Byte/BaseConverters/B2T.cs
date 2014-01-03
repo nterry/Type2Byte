@@ -16,21 +16,21 @@ namespace Type2Byte.BaseConverters
             IsLittleEndian = DetermineIfLittleEndian();
         }
 
-        public static T Get<T>(byte[] value)
+        public static T Get<T>(byte[] value, int startIndex = 0)
         {
-            if (typeof(T) == typeof(bool)) return (T)(object)GetBool(value);
-            if (typeof(T) == typeof(byte)) return (T)(object)GetByte(value);
-            if (typeof(T) == typeof(sbyte)) return (T)(object)GetSByte(value);
-            if (typeof(T) == typeof(char)) return (T)(object)GetChar(value);
-            if (typeof(T) == typeof(float)) return (T)(object)GetFloat(value);
-            if (typeof(T) == typeof(double)) return (T)(object)GetDouble(value);
-            if (typeof(T) == typeof(int)) return (T)(object)GetInt(value);
-            if (typeof(T) == typeof(uint)) return (T)(object)GetUInt(value);
-            if (typeof(T) == typeof(long)) return (T)(object)GetLong(value);
-            if (typeof(T) == typeof(ulong)) return (T)(object)GetULong(value);
-            if (typeof(T) == typeof(short)) return (T)(object)GetShort(value);
-            if (typeof(T) == typeof(ushort)) return (T)(object)GetUShort(value);
-            if (typeof(T) == typeof(string)) return (T)(object)GetString(value);
+            if (typeof(T) == typeof(bool)) return (T)(object)GetBool(value, startIndex);
+            if (typeof(T) == typeof(byte)) return (T)(object)GetByte(value, startIndex);
+            if (typeof(T) == typeof(sbyte)) return (T)(object)GetSByte(value, startIndex);
+            if (typeof(T) == typeof(char)) return (T)(object)GetChar(value, startIndex);
+            if (typeof(T) == typeof(float)) return (T)(object)GetFloat(value, startIndex);
+            if (typeof(T) == typeof(double)) return (T)(object)GetDouble(value, startIndex);
+            if (typeof(T) == typeof(int)) return (T)(object)GetInt(value, startIndex);
+            if (typeof(T) == typeof(uint)) return (T)(object)GetUInt(value, startIndex);
+            if (typeof(T) == typeof(long)) return (T)(object)GetLong(value, startIndex);
+            if (typeof(T) == typeof(ulong)) return (T)(object)GetULong(value, startIndex);
+            if (typeof(T) == typeof(short)) return (T)(object)GetShort(value, startIndex);
+            if (typeof(T) == typeof(ushort)) return (T)(object)GetUShort(value, startIndex);
+            if (typeof(T) == typeof(string)) return (T)(object)GetString(value, startIndex);
             throw new DataException("Provided type ({0}) cannot be deserialized from given value. You must provide a valuetype (except struct and enum) or a string");
         }
 
@@ -44,7 +44,7 @@ namespace Type2Byte.BaseConverters
             return (result == 'a');
         }
 
-        private static bool GetBool(byte[] value, int startIndex = 0)
+        private static bool GetBool(byte[] value, int startIndex)
         {
             if (value == null) throw new ArgumentNullException("value");
             if (value.Length != sizeof(bool)) throw new DataException("Provided data does not appear to be of type bool");
@@ -52,7 +52,7 @@ namespace Type2Byte.BaseConverters
             return (value.First() != 0);
         }
 
-        private static byte GetByte(byte[] value, int startIndex = 0)
+        private static byte GetByte(byte[] value, int startIndex)
         {
             if (value == null) throw new ArgumentNullException("value");
             if (value.Length != sizeof(byte)) throw new DataException("Provided data does not appear to be of type byte");
@@ -60,7 +60,7 @@ namespace Type2Byte.BaseConverters
             return value.First();
         }
 
-        private static sbyte GetSByte(byte[] value, int startIndex = 0)
+        private static sbyte GetSByte(byte[] value, int startIndex)
         {
             if (value == null) throw new ArgumentNullException("value");
             if (value.Length != sizeof(sbyte)) throw new DataException("Provided data does not appear to be of type sbyte");
@@ -68,15 +68,19 @@ namespace Type2Byte.BaseConverters
             return (sbyte)value.First();
         }
 
-        private static char GetChar(byte[] value, int startIndex = 0)
+        private static char GetChar(byte[] value, int startIndex)
         {
             if (value == null) throw new ArgumentNullException("value");
-            if (value.Length != sizeof(char)) throw new DataException("Provided data does not appear to be of type char");
+            if (value.Length != (sizeof(char) + startIndex)) throw new DataException("Provided data does not appear to be of type char");
             HandleEndianness(value);
-            return Convert.ToChar((value[0] | value[1] << 8));
+            var charArray = new char[1];
+            Buffer.BlockCopy(value, startIndex, charArray, 0, sizeof(char));
+            return charArray[0];
+            //var c = Convert.ToChar((value[0] | value[1] << 8));
+            //return c >>= startIndex;
         }
 
-        private static float GetFloat(byte[] value, int startIndex = 0)
+        private static float GetFloat(byte[] value, int startIndex)
         {
             if (value == null) throw new ArgumentNullException("value");
             if (value.Length != sizeof(float)) throw new DataException("Provided data does not appear to be of type float");
@@ -86,7 +90,7 @@ namespace Type2Byte.BaseConverters
             return floatArray[0];
         }
 
-        private static double GetDouble(byte[] value, int startIndex = 0)
+        private static double GetDouble(byte[] value, int startIndex)
         {
             if (value == null) throw new ArgumentNullException("value");
             if (value.Length != sizeof(double)) throw new DataException("Provided data does not appear to be of type double");
@@ -96,7 +100,7 @@ namespace Type2Byte.BaseConverters
             return doubleArray[0];
         }
 
-        private static int GetInt(byte[] value, int startIndex = 0)
+        private static int GetInt(byte[] value, int startIndex)
         {
             if (value == null) throw new ArgumentNullException("value");
             if (value.Length != sizeof(int)) throw new DataException("Provided data does not appear to be of type int");
@@ -104,7 +108,7 @@ namespace Type2Byte.BaseConverters
             return (value[0] << 0) | (value[1] << 8) | (value[2] << 16) | (value[3] << 24);
         }
 
-        private static uint GetUInt(byte[] value, int startIndex = 0)
+        private static uint GetUInt(byte[] value, int startIndex)
         {
             if (value == null) throw new ArgumentNullException("value");
             if (value.Length != sizeof(uint)) throw new DataException("Provided data does not appear to be of type uint");
@@ -112,7 +116,7 @@ namespace Type2Byte.BaseConverters
             return Convert.ToUInt32((value[0] << 0) | (value[1] << 8) | (value[2] << 16) | (value[3] << 24));
         }
 
-        private static long GetLong(byte[] value, int startIndex = 0)
+        private static long GetLong(byte[] value, int startIndex)
         {
             if (value == null) throw new ArgumentNullException("value");
             if (value.Length != sizeof(long)) throw new DataException("Provided data does not appear to be of type long");
@@ -120,7 +124,7 @@ namespace Type2Byte.BaseConverters
             return Convert.ToInt64((value[0] << 0) | (value[1] << 8) | (value[2] << 16) | (value[3] << 24 | value[4] << 32) | (value[5] << 40) | (value[6] << 48) | (value[7] << 56));
         }
 
-        private static ulong GetULong(byte[] value, int startIndex = 0)
+        private static ulong GetULong(byte[] value, int startIndex)
         {
             if (value == null) throw new ArgumentNullException("value");
             if (value.Length != sizeof(ulong)) throw new DataException("Provided data does not appear to be of type ulong");
@@ -128,7 +132,7 @@ namespace Type2Byte.BaseConverters
             return Convert.ToUInt64((value[0] << 0) | (value[1] << 8) | (value[2] << 16) | (value[3] << 24 | value[4] << 32) | (value[5] << 40) | (value[6] << 48) | (value[7] << 56));
         }
 
-        private static short GetShort(byte[] value, int startIndex = 0)
+        private static short GetShort(byte[] value, int startIndex)
         {
             if (value == null) throw new ArgumentNullException("value");
             if (value.Length != sizeof(ulong)) throw new DataException("Provided data does not appear to be of type ulong");
@@ -136,7 +140,7 @@ namespace Type2Byte.BaseConverters
             return Convert.ToInt16((value[0] << 0) | (value[1] << 8));
         }
 
-        private static ushort GetUShort(byte[] value, int startIndex = 0)
+        private static ushort GetUShort(byte[] value, int startIndex)
         {
             if (value == null) throw new ArgumentNullException("value");
             if (value.Length != sizeof(ulong)) throw new DataException("Provided data does not appear to be of type ulong");
@@ -144,7 +148,7 @@ namespace Type2Byte.BaseConverters
             return Convert.ToUInt16((value[0] << 0) | (value[1] << 8));
         }
 
-        private static string GetString(byte[] value, int startIndex = 0)
+        private static string GetString(byte[] value, int startIndex)
         {
             var sb = new StringBuilder();
             HandleEndianness(value);

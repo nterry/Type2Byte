@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,53 @@ namespace Type2Byte.Tests.BaseConverters
     [TestFixture]
     class B2TTests
     {
+        #region GetChar tests
+        [Test]
+        public void GetChar_ReturnsCorrectChar_WhenStartIndexIsZero()
+        {
+            const char expectedChar = 'a';
+
+            var actualChar = B2T.Get<char>(T2B.ToBytes(expectedChar));
+
+            Assert.AreEqual(expectedChar, actualChar);
+        }
+
+        [Test]
+        public void GetChar_ReturnsCorrectChar_WhenStartIndexIsNotZero()
+        {
+            const char expectedChar = 'b';
+            const int offset = 2;
+
+            var bytes = CreateByteListWithPrepend(offset, T2B.ToBytes(expectedChar));
+            var actualChar = B2T.Get<char>(bytes, offset);
+
+            Assert.AreEqual(expectedChar, actualChar);
+        }
+
+        [Test]
+        public void GetChar_ThrowsArgumentNullException_WhenNullIsProvided()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                B2T.Get<char>(null);
+            });
+        }
+
+        [Test]
+        public void GetChar_ThrowsDataException_WhenInvalidStartIndexIsProvided()
+        {
+            const int offset = 2;
+
+            var bytes = CreateByteListWithPrepend(offset, T2B.ToBytes('b'));
+
+            Assert.Throws<DataException>(() =>
+            {
+                var actualChar = B2T.Get<char>(bytes, offset - 1);
+            });
+        }
+        #endregion
+
+        #region GetFloat tests
         [Test]
         public void GetFloat_ReturnsCorrectFloat_WhenPowerIsHigh()
         {
@@ -33,7 +81,9 @@ namespace Type2Byte.Tests.BaseConverters
 
             Assert.LessOrEqual(expectedFloat - actualFloat, epsilon);
         }
+        #endregion
 
+        #region GetDouble tests
         [Test]
         public void GetDouble_ReturnsCorrectDouble_WhenPowerIsHigh()
         {
@@ -55,5 +105,20 @@ namespace Type2Byte.Tests.BaseConverters
 
             Assert.LessOrEqual(expectedDouble - actualDouble, epsilon);
         }
+        #endregion
+
+        #region Private helpers
+        private byte[] CreateByteListWithPrepend(int prependAmount, byte[] data)
+        {
+            List<byte> byteList = new List<byte>();
+            for (int i = 0; i < prependAmount; i++)
+                byteList.Add(default(byte));
+            byteList.AddRange(data);
+
+            return byteList.ToArray();
+        }
+
+
+        #endregion
     }
 }
