@@ -103,9 +103,11 @@ namespace Type2Byte.BaseConverters
         private static int GetInt(byte[] value, int startIndex)
         {
             if (value == null) throw new ArgumentNullException("value");
-            if (value.Length != sizeof(int)) throw new DataException("Provided data does not appear to be of type int");
+            if (value.Length != (sizeof(int) + startIndex)) throw new DataException("Provided data does not appear to be of type int");
             HandleEndianness(value);
-            return (value[0] << 0) | (value[1] << 8) | (value[2] << 16) | (value[3] << 24);
+            var intArray = new int[1];
+            Buffer.BlockCopy(value, startIndex, intArray, 0, sizeof(int));
+            return intArray[0];
         }
 
         private static uint GetUInt(byte[] value, int startIndex)

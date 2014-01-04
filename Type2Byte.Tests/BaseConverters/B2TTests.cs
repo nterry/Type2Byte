@@ -195,6 +195,52 @@ namespace Type2Byte.Tests.BaseConverters
         }
         #endregion
 
+        #region GetInt tests
+        [Test]
+        public void GetInt_ReturnsCorrectInt_WhenStartIndexIsZero()
+        {
+            const int expectedInt = 325;
+
+            var actualInt = B2T.Get<int>(T2B.ToBytes(expectedInt));
+
+            Assert.AreEqual(expectedInt, actualInt);
+        }
+
+        [Test]
+        public void GetInt_ReturnsCorrectInt_WhenStartIndexIsNotZero()
+        {
+            const int expectedInt = 985;
+            const int offset = 2;
+
+            var bytes = CreateByteListWithPrepend(offset, T2B.ToBytes(expectedInt));
+            var actualInt = B2T.Get<int>(bytes, offset);
+
+            Assert.AreEqual(expectedInt, actualInt);
+        }
+
+        [Test]
+        public void GetInt_ThrowsArgumentNullException_WhenNullIsProvided()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                B2T.Get<int>(null);
+            });
+        }
+
+        [Test]
+        public void GetInt_ThrowsDataException_WhenInvalidStartIndexIsProvided()
+        {
+            const int offset = 2;
+
+            var bytes = CreateByteListWithPrepend(offset, T2B.ToBytes(965));
+
+            Assert.Throws<DataException>(() =>
+            {
+                var actualChar = B2T.Get<int>(bytes, offset - 1);
+            });
+        }
+        #endregion
+
         #region Private helpers
         private byte[] CreateByteListWithPrepend(int prependAmount, byte[] data)
         {
