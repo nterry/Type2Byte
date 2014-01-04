@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AnalyseParams>
+  <TargetExecutable>C:\Program Files (x86)\NUnit 2.6.3\bin\nunit.exe</TargetExecutable>
+  <TargetArguments>Type2Byte.Tests.dll /run</TargetArguments>
+  <TargetWorkingDir>Type2Byte.Tests\bin\Debug</TargetWorkingDir>
+  <Output>coverage-report.html</Output>
+  <ReportType>HTML</ReportType>
+</AnalyseParams>
