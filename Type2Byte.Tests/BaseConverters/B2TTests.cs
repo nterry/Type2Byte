@@ -81,6 +81,50 @@ namespace Type2Byte.Tests.BaseConverters
 
             Assert.LessOrEqual(expectedFloat - actualFloat, epsilon);
         }
+
+        [Test]
+        public void GetFloat_ReturnsCorrectFloat_WhenStartIndexIsZero()
+        {
+            const float expectedFloat = 1.0F;
+
+            var actualChar = B2T.Get<float>(T2B.ToBytes(expectedFloat));
+
+            Assert.AreEqual(expectedFloat, actualChar);
+        }
+
+        [Test]
+        public void GetFloat_ReturnsCorrectFloat_WhenStartIndexIsNotZero()
+        {
+            const float expectedFloat = 1.0F;
+            const int offset = 2;
+
+            var bytes = CreateByteListWithPrepend(offset, T2B.ToBytes(expectedFloat));
+            var actualFloat = B2T.Get<float>(bytes, offset);
+
+            Assert.AreEqual(expectedFloat, actualFloat);
+        }
+
+        [Test]
+        public void GetFloat_ThrowsArgumentNullException_WhenNullIsProvided()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                B2T.Get<float>(null);
+            });
+        }
+
+        [Test]
+        public void GetFloat_ThrowsDataException_WhenInvalidStartIndexIsProvided()
+        {
+            const int offset = 2;
+
+            var bytes = CreateByteListWithPrepend(offset, T2B.ToBytes(2.5F));
+
+            Assert.Throws<DataException>(() =>
+            {
+                var actualChar = B2T.Get<float>(bytes, offset - 1);
+            });
+        }
         #endregion
 
         #region GetDouble tests
@@ -104,6 +148,50 @@ namespace Type2Byte.Tests.BaseConverters
             var actualDouble = B2T.Get<double>(T2B.ToBytes(expectedDouble));
 
             Assert.LessOrEqual(expectedDouble - actualDouble, epsilon);
+        }
+
+        [Test]
+        public void GetDouble_ReturnsCorrectDouble_WhenStartIndexIsZero()
+        {
+            const double expectedDouble = 4.0;
+
+            var actualDouble = B2T.Get<double>(T2B.ToBytes(expectedDouble));
+
+            Assert.AreEqual(expectedDouble, actualDouble);
+        }
+
+        [Test]
+        public void GetDouble_ReturnsCorrectDouble_WhenStartIndexIsNotZero()
+        {
+            const double expectedDouble = 3.6;
+            const int offset = 3;
+
+            var bytes = CreateByteListWithPrepend(offset, T2B.ToBytes(expectedDouble));
+            var actualDouble = B2T.Get<double>(bytes, offset);
+
+            Assert.AreEqual(expectedDouble, actualDouble);
+        }
+
+        [Test]
+        public void GetDouble_ThrowsArgumentNullException_WhenNullIsProvided()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                B2T.Get<double>(null);
+            });
+        }
+
+        [Test]
+        public void GetDouble_ThrowsDataException_WhenInvalidStartIndexIsProvided()
+        {
+            const int offset = 5;
+
+            var bytes = CreateByteListWithPrepend(offset, T2B.ToBytes(2.3));
+
+            Assert.Throws<DataException>(() =>
+            {
+                var actualDouble = B2T.Get<double>(bytes, offset - 1);
+            });
         }
         #endregion
 

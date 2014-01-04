@@ -83,20 +83,20 @@ namespace Type2Byte.BaseConverters
         private static float GetFloat(byte[] value, int startIndex)
         {
             if (value == null) throw new ArgumentNullException("value");
-            if (value.Length != sizeof(float)) throw new DataException("Provided data does not appear to be of type float");
+            if (value.Length != (sizeof(float) + startIndex)) throw new DataException("Provided data does not appear to be of type float");
             HandleEndianness(value);
             var floatArray = new float[1];
-            Buffer.BlockCopy(value, startIndex, floatArray, 0, value.Length - startIndex);
+            Buffer.BlockCopy(value, startIndex, floatArray, 0, sizeof(float));
             return floatArray[0];
         }
 
         private static double GetDouble(byte[] value, int startIndex)
         {
             if (value == null) throw new ArgumentNullException("value");
-            if (value.Length != sizeof(double)) throw new DataException("Provided data does not appear to be of type double");
+            if (value.Length != (sizeof(double) + startIndex)) throw new DataException("Provided data does not appear to be of type double");
             HandleEndianness(value);
             var doubleArray = new double[1];
-            Buffer.BlockCopy(value, startIndex, doubleArray, 0, value.Length - startIndex);
+            Buffer.BlockCopy(value, startIndex, doubleArray, 0, sizeof(double));
             return doubleArray[0];
         }
 
