@@ -168,13 +168,13 @@ namespace Type2Byte.BaseConverters
         //TODO: Need to handle string offset
         private static string GetString(byte[] value, int startIndex)
         {
-            var sb = new StringBuilder();
+            startIndex *= 2; //need to double as chars are 2 bytes
+            if (value == null) throw new ArgumentNullException("value");
+            if (value.Length < startIndex) throw new DataException("Start index given is is past the end of the string");
             HandleEndianness(value);
-            foreach (var @char in value)
-            {
-                sb.Append(@char);
-            }
-            return sb.ToString();
+            char[] chars = new char[(value.Length / sizeof(char)) - (startIndex / 2)];
+            System.Buffer.BlockCopy(value, startIndex, chars, 0, value.Length - startIndex);
+            return new string(chars);
         }
 
         private static void HandleEndianness(byte[] byteArray)

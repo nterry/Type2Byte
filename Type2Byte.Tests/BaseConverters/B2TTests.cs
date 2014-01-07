@@ -18,7 +18,7 @@ namespace Type2Byte.Tests.BaseConverters
         {
             Assert.Throws<DataException>(() =>
             {
-                var thing = B2T.Get<NotSupportedException>(new byte[1]);
+                var thing = B2T.Get<Action>(new byte[1]);
             });
         }
 
@@ -63,7 +63,99 @@ namespace Type2Byte.Tests.BaseConverters
 
             Assert.Throws<DataException>(() =>
             {
-                var actualChar = B2T.Get<bool>(bytes, offset - 1);
+                var actualBool = B2T.Get<bool>(bytes, offset - 1);
+            });
+        }
+        #endregion
+
+        #region GetByte tests
+        [Test]
+        public void GetByte_ReturnsCorrectByte_WhenStartIndexIsZero()
+        {
+            const byte expectedByte = 0x7e;
+
+            var actualByte = B2T.Get<byte>(T2B.ToBytes(expectedByte));
+
+            Assert.AreEqual(expectedByte, actualByte);
+        }
+
+        [Test]
+        public void GetByte_ReturnsCorrectByte_WhenStartIndexIsNotZero()
+        {
+            const byte expectedByte = 0x6f;
+            const int offset = 2;
+
+            var bytes = CreateByteListWithPrepend(offset, T2B.ToBytes(expectedByte));
+            var actualByte = B2T.Get<byte>(bytes, offset);
+
+            Assert.AreEqual(expectedByte, actualByte);
+        }
+
+        [Test]
+        public void GetByte_ThrowsArgumentNullException_WhenNullIsProvided()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                B2T.Get<byte>(null);
+            });
+        }
+
+        [Test]
+        public void GetByte_ThrowsDataException_WhenInvalidStartIndexIsProvided()
+        {
+            const int offset = 2;
+
+            var bytes = CreateByteListWithPrepend(offset, T2B.ToBytes(0xff));
+
+            Assert.Throws<DataException>(() =>
+            {
+                var actualByte = B2T.Get<byte>(bytes, offset - 1);
+            });
+        }
+        #endregion
+
+        #region GetSByte tests
+        [Test]
+        public void GetSByte_ReturnsCorrectSByte_WhenStartIndexIsZero()
+        {
+            const sbyte expectedSByte = -0x45;
+
+            var actualSByte = B2T.Get<sbyte>(T2B.ToBytes(expectedSByte));
+
+            Assert.AreEqual(expectedSByte, actualSByte);
+        }
+
+        [Test]
+        public void GetSByte_ReturnsCorrectSByte_WhenStartIndexIsNotZero()
+        {
+            const sbyte expectedSByte = -0x68;
+            const int offset = 2;
+
+            var bytes = CreateByteListWithPrepend(offset, T2B.ToBytes(expectedSByte));
+            var actualSByte = B2T.Get<sbyte>(bytes, offset);
+
+            Assert.AreEqual(expectedSByte, actualSByte);
+        }
+
+        [Test]
+        public void GetDByte_ThrowsArgumentNullException_WhenNullIsProvided()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                B2T.Get<sbyte>(null);
+            });
+        }
+
+        [Test]
+        public void GetSByte_ThrowsDataException_WhenInvalidStartIndexIsProvided()
+        {
+            const int offset = 2;
+
+            var bytes = CreateByteListWithPrepend(offset, T2B.ToBytes(-0x22));
+
+            Assert.Throws<DataException>(() =>
+            {
+                var actualByte = B2T.Get<sbyte>(bytes, offset - 1);
             });
         }
         #endregion
@@ -521,6 +613,52 @@ namespace Type2Byte.Tests.BaseConverters
         }
         #endregion
 
+        #region GetString tests
+        [Test]
+        public void GetString_ReturnsCorrectString_WhenStartIndexIsZero()
+        {
+            const string expectedString = "awesomesauce";
+
+            var actualString = B2T.Get<string>(T2B.ToBytes(expectedString));
+
+            Assert.AreEqual(expectedString, actualString);
+        }
+
+        [Test]
+        public void GetString_ReturnsCorrectString_WhenStartIndexIsNotZero()
+        {
+            const string expectedString = "captain-wootpants";
+            const int offset = 2;
+
+            var bytes = CreateByteListWithPrepend(offset * 2, T2B.ToBytes(expectedString));
+            var actualString = B2T.Get<string>(bytes, offset);
+
+            Assert.AreEqual(expectedString, actualString);
+        }
+
+        [Test]
+        public void GetString_ThrowsArgumentNullException_WhenNullIsProvided()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                B2T.Get<string>(null);
+            });
+        }
+
+        [Test]
+        public void GetString_ThrowsDataException_WhenInvalidStartIndexIsProvided()
+        {
+            const int offset = 2;
+
+            var bytes = CreateByteListWithPrepend(offset, T2B.ToBytes(""));
+
+            Assert.Throws<DataException>(() =>
+            {
+                var actualString = B2T.Get<string>(bytes, offset);
+            });
+        }
+        #endregion
+
         #region Private helpers
         private byte[] CreateByteListWithPrepend(int prependAmount, byte[] data)
         {
@@ -528,6 +666,19 @@ namespace Type2Byte.Tests.BaseConverters
             for (int i = 0; i < prependAmount; i++)
                 byteList.Add(default(byte));
             byteList.AddRange(data);
+
+            return byteList.ToArray();
+        }
+
+        private byte[] CreateByteListWithPrependFromString(int prependAmount, string data)
+        {
+            byte[] converted = T2B.ToBytes(data);
+            List<byte> byteList = new List<byte>();
+            for (int i = 0; i < prependAmount; i++)
+            {
+                byteList.Add(default(byte));
+            }     
+            byteList.AddRange(converted);
 
             return byteList.ToArray();
         }

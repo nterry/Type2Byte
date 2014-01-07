@@ -116,5 +116,12 @@ namespace Type2Byte.BaseConverters
             }
             return bytes;
         }
+
+        public static byte[] ToBytes(string value)
+        {
+            byte[] bytes = new byte[value.Length * sizeof(char)];
+            System.Buffer.BlockCopy(value.ToCharArray(), 0, bytes, 0, bytes.Length);
+            return bytes;
+        }
     }
 }
