@@ -13,6 +13,61 @@ namespace Type2Byte.Tests.BaseConverters
     [TestFixture]
     class B2TTests
     {
+        [Test]
+        public void GetT_ThrowsDataException_WhenInvlaidTypeIsGiven()
+        {
+            Assert.Throws<DataException>(() =>
+            {
+                var thing = B2T.Get<NotSupportedException>(new byte[1]);
+            });
+        }
+
+        #region GetBool tests
+        [Test]
+        public void GetBool_ReturnsCorrectBool_WhenStartIndexIsZero()
+        {
+            const bool expectedBool = false;
+
+            var actualBool = B2T.Get<bool>(T2B.ToBytes(expectedBool));
+
+            Assert.AreEqual(expectedBool, actualBool);
+        }
+
+        [Test]
+        public void GetBool_ReturnsCorrectBool_WhenStartIndexIsNotZero()
+        {
+            const bool expectedBool = true;
+            const int offset = 2;
+
+            var bytes = CreateByteListWithPrepend(offset, T2B.ToBytes(expectedBool));
+            var actualBool = B2T.Get<bool>(bytes, offset);
+
+            Assert.AreEqual(expectedBool, actualBool);
+        }
+
+        [Test]
+        public void GetBool_ThrowsArgumentNullException_WhenNullIsProvided()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                B2T.Get<bool>(null);
+            });
+        }
+
+        [Test]
+        public void GetBool_ThrowsDataException_WhenInvalidStartIndexIsProvided()
+        {
+            const int offset = 2;
+
+            var bytes = CreateByteListWithPrepend(offset, T2B.ToBytes(false));
+
+            Assert.Throws<DataException>(() =>
+            {
+                var actualChar = B2T.Get<bool>(bytes, offset - 1);
+            });
+        }
+        #endregion
+
         #region GetChar tests
         [Test]
         public void GetChar_ReturnsCorrectChar_WhenStartIndexIsZero()
@@ -122,7 +177,7 @@ namespace Type2Byte.Tests.BaseConverters
 
             Assert.Throws<DataException>(() =>
             {
-                var actualChar = B2T.Get<float>(bytes, offset - 1);
+                var actualFloat = B2T.Get<float>(bytes, offset - 1);
             });
         }
         #endregion
@@ -236,7 +291,232 @@ namespace Type2Byte.Tests.BaseConverters
 
             Assert.Throws<DataException>(() =>
             {
-                var actualChar = B2T.Get<int>(bytes, offset - 1);
+                var actualInt = B2T.Get<int>(bytes, offset - 1);
+            });
+        }
+        #endregion
+
+        #region GetUInt tests
+        public void GetUInt_ReturnsCorrectUInt_WhenStartIndexIsZero()
+        {
+            const uint expectedUInt = 435234;
+
+            var actualUInt = B2T.Get<uint>(T2B.ToBytes(expectedUInt));
+
+            Assert.AreEqual(expectedUInt, actualUInt);
+        }
+
+        [Test]
+        public void GetUInt_ReturnsCorrectUInt_WhenStartIndexIsNotZero()
+        {
+            const uint expectedUInt = 943052234;
+            const int offset = 2;
+
+            var bytes = CreateByteListWithPrepend(offset, T2B.ToBytes(expectedUInt));
+            var actualUInt = B2T.Get<uint>(bytes, offset);
+
+            Assert.AreEqual(expectedUInt, actualUInt);
+        }
+
+        [Test]
+        public void GetUInt_ThrowsArgumentNullException_WhenNullIsProvided()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                B2T.Get<uint>(null);
+            });
+        }
+
+        [Test]
+        public void GetUInt_ThrowsDataException_WhenInvalidStartIndexIsProvided()
+        {
+            const int offset = 2;
+
+            var bytes = CreateByteListWithPrepend(offset, T2B.ToBytes((uint)9653453));
+
+            Assert.Throws<DataException>(() =>
+            {
+                var actualUint = B2T.Get<uint>(bytes, offset - 1);
+            });
+        }
+        #endregion
+
+        #region GetLong tests
+        public void GetLong_ReturnsCorrectLong_WhenStartIndexIsZero()
+        {
+            const long expectedLong = 4352346566;
+
+            var actualLong = B2T.Get<long>(T2B.ToBytes(expectedLong));
+
+            Assert.AreEqual(expectedLong, actualLong);
+        }
+
+        [Test]
+        public void GetLong_ReturnsCorrectLong_WhenStartIndexIsNotZero()
+        {
+            const long expectedLong = 943052234;
+            const int offset = 2;
+
+            var bytes = CreateByteListWithPrepend(offset, T2B.ToBytes(expectedLong));
+            var actualLong = B2T.Get<long>(bytes, offset);
+
+            Assert.AreEqual(expectedLong, actualLong);
+        }
+
+        [Test]
+        public void GetLong_ThrowsArgumentNullException_WhenNullIsProvided()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                B2T.Get<long>(null);
+            });
+        }
+
+        [Test]
+        public void GetLong_ThrowsDataException_WhenInvalidStartIndexIsProvided()
+        {
+            const int offset = 2;
+
+            var bytes = CreateByteListWithPrepend(offset, T2B.ToBytes(96534534566));
+
+            Assert.Throws<DataException>(() =>
+            {
+                var actualLong = B2T.Get<long>(bytes, offset - 1);
+            });
+        }
+        #endregion
+
+        #region GetULong tests
+        public void GetULong_ReturnsCorrectULong_WhenStartIndexIsZero()
+        {
+            const ulong expectedULong = 4352346566;
+
+            var actualULong = B2T.Get<ulong>(T2B.ToBytes(expectedULong));
+
+            Assert.AreEqual(expectedULong, actualULong);
+        }
+
+        [Test]
+        public void GetULong_ReturnsCorrectULong_WhenStartIndexIsNotZero()
+        {
+            const ulong expectedULong = 943052234;
+            const int offset = 2;
+
+            var bytes = CreateByteListWithPrepend(offset, T2B.ToBytes(expectedULong));
+            var actualULong = B2T.Get<ulong>(bytes, offset);
+
+            Assert.AreEqual(expectedULong, actualULong);
+        }
+
+        [Test]
+        public void GetULong_ThrowsArgumentNullException_WhenNullIsProvided()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                B2T.Get<ulong>(null);
+            });
+        }
+
+        [Test]
+        public void GetULong_ThrowsDataException_WhenInvalidStartIndexIsProvided()
+        {
+            const int offset = 2;
+
+            var bytes = CreateByteListWithPrepend(offset, T2B.ToBytes((ulong)96534534566));
+
+            Assert.Throws<DataException>(() =>
+            {
+                var actuaUlLong = B2T.Get<ulong>(bytes, offset - 1);
+            });
+        }
+        #endregion
+
+        #region GetShort tests
+        public void GetShort_ReturnsCorrectShort_WhenStartIndexIsZero()
+        {
+            const short expectedShort = 5647;
+
+            var actualShort = B2T.Get<short>(T2B.ToBytes(expectedShort));
+
+            Assert.AreEqual(expectedShort, actualShort);
+        }
+
+        [Test]
+        public void GetShort_ReturnsCorrectShort_WhenStartIndexIsNotZero()
+        {
+            const short expectedShort = 3245;
+            const int offset = 2;
+
+            var bytes = CreateByteListWithPrepend(offset, T2B.ToBytes(expectedShort));
+            var actualShort = B2T.Get<short>(bytes, offset);
+
+            Assert.AreEqual(expectedShort, actualShort);
+        }
+
+        [Test]
+        public void GetShort_ThrowsArgumentNullException_WhenNullIsProvided()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                B2T.Get<short>(null);
+            });
+        }
+
+        [Test]
+        public void GetShort_ThrowsDataException_WhenInvalidStartIndexIsProvided()
+        {
+            const int offset = 2;
+
+            var bytes = CreateByteListWithPrepend(offset, T2B.ToBytes((short)6585));
+
+            Assert.Throws<DataException>(() =>
+            {
+                var actualShort = B2T.Get<short>(bytes, offset - 1);
+            });
+        }
+        #endregion
+
+        #region GetUShort tests
+        public void GetUShort_ReturnsCorrectUShort_WhenStartIndexIsZero()
+        {
+            const ushort expectedUShort = 5647;
+
+            var actualUShort = B2T.Get<ushort>(T2B.ToBytes(expectedUShort));
+
+            Assert.AreEqual(expectedUShort, actualUShort);
+        }
+
+        [Test]
+        public void GetUShort_ReturnsCorrectUShort_WhenStartIndexIsNotZero()
+        {
+            const ushort expectedUShort = 3245;
+            const int offset = 2;
+
+            var bytes = CreateByteListWithPrepend(offset, T2B.ToBytes(expectedUShort));
+            var actualUShort = B2T.Get<ushort>(bytes, offset);
+
+            Assert.AreEqual(expectedUShort, actualUShort);
+        }
+
+        [Test]
+        public void GetUShort_ThrowsArgumentNullException_WhenNullIsProvided()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                B2T.Get<ushort>(null);
+            });
+        }
+
+        [Test]
+        public void GetUShort_ThrowsDataException_WhenInvalidStartIndexIsProvided()
+        {
+            const int offset = 2;
+
+            var bytes = CreateByteListWithPrepend(offset, T2B.ToBytes((ushort)6754));
+
+            Assert.Throws<DataException>(() =>
+            {
+                var actualUShort = B2T.Get<ushort>(bytes, offset - 1);
             });
         }
         #endregion
