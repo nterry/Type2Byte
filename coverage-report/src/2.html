@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\nicholasterry\documents\github\type2byte\type2byte.tests\baseconverters\t2btests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Type2Byte.BaseConverters;
+
+namespace Type2Byte.Tests.BaseConverters
+{
+    //TODO: Need to separate these tests to each individual type
+    [TestFixture]
+    public class BitConvertTests
+    {
+        [Test]
+        public void ToBytes_ReturnsAppropriatelyBitConvertedValue()
+        {
+            var expectedSByte = new byte[] { 165 };
+            var expectedByte = new byte[] { 45 };
+            var expectedChar = new byte[] { 99, 0 };
+            var expectedBool = new byte[] { 1 };
+            var expectedInt = new byte[] { 89, 34, 255, 255 };
+            var expectedUInt = new byte[] { 78, 97, 188, 0 };
+            var expectedShort = new byte[] { 184, 17 };
+            var expectedUShort = new byte[] { 145, 30 };
+            var expectedLong = new byte[] { 184, 53, 185, 194, 219, 6, 0, 0 };
+            var expectedULong = new byte[] { 15, 246, 250, 107, 91, 163, 32, 109 };
+            var expectedFloat = new byte[] { 0, 64, 58, 71 };
+            var expectedDouble = new byte[] { 103, 3, 166, 185, 64, 31, 18, 60 };
+
+            var actualSByte = T2B.ToBytes((sbyte)-91);
+            var actualByte = T2B.ToBytes((byte)45);
+            var actualChar = T2B.ToBytes(&#39;c&#39;);
+            var actualBool = T2B.ToBytes(true);
+            var actualInt = T2B.ToBytes(-56743);
+            var actualUInt = T2B.ToBytes((uint)12345678);
+            var actualShort = T2B.ToBytes((short)4536);
+            var actualUShort = T2B.ToBytes((ushort)7825);
+            var actualLong = T2B.ToBytes(7540934522296);
+            var actualULong = T2B.ToBytes((ulong)7863464562437846543);
+            var actualFloat = T2B.ToBytes((float)4.768e4);
+            var actualDouble = T2B.ToBytes(2456e-22);
+
+            Assert.AreEqual(expectedSByte, actualSByte);
+            Assert.AreEqual(expectedByte, actualByte);
+            Assert.AreEqual(expectedChar, actualChar);
+            Assert.AreEqual(expectedBool, actualBool);
+            Assert.AreEqual(expectedInt, actualInt);
+            Assert.AreEqual(expectedUInt, actualUInt);
+            Assert.AreEqual(expectedShort, actualShort);
+            Assert.AreEqual(expectedUShort, actualUShort);
+            Assert.AreEqual(expectedLong, actualLong);
+            Assert.AreEqual(expectedULong, actualULong);
+            Assert.AreEqual(expectedFloat, actualFloat);
+            Assert.AreEqual(expectedDouble, actualDouble);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,9,17,10,1],[18,13,18,52,1],[19,13,19,50,1],[20,13,20,53,1],[21,13,21,49,1],[22,13,22,63,1],[23,13,23,62,1],[24,13,24,56,1],[25,13,25,57,1],[26,13,26,79,1],[27,13,27,84,1],[28,13,28,62,1],[29,13,29,82,1],[31,13,31,55,1],[32,13,32,52,1],[33,13,33,47,1],[34,13,34,48,1],[35,13,35,49,1],[36,13,36,58,1],[37,13,37,56,1],[38,13,38,58,1],[39,13,39,57,1],[40,13,40,71,1],[41,13,41,59,1],[42,13,42,54,1],[44,13,44,57,1],[45,13,45,55,1],[46,13,46,55,1],[47,13,47,55,1],[48,13,48,53,1],[49,13,49,55,1],[50,13,50,57,1],[51,13,51,59,1],[52,13,52,55,1],[53,13,53,57,1],[54,13,54,57,1],[55,13,55,59,1],[56,9,56,10,1]]);
+    </script>
+  </body>
+</html>

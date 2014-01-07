@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\nicholasterry\documents\github\type2byte\type2byte\baseconverters\b2t.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Type2Byte.BaseConverters
+{
+    public class B2T
+    {
+        public static bool IsLittleEndian { get; private set; }
+
+        static B2T()
+        {
+            IsLittleEndian = DetermineIfLittleEndian();
+        }
+
+        public static T Get&lt;T&gt;(byte[] value, int startIndex = 0)
+        {
+            if (typeof(T) == typeof(bool)) return (T)(object)GetBool(value, startIndex);
+            if (typeof(T) == typeof(byte)) return (T)(object)GetByte(value, startIndex);
+            if (typeof(T) == typeof(sbyte)) return (T)(object)GetSByte(value, startIndex);
+            if (typeof(T) == typeof(char)) return (T)(object)GetChar(value, startIndex);
+            if (typeof(T) == typeof(float)) return (T)(object)GetFloat(value, startIndex);
+            if (typeof(T) == typeof(double)) return (T)(object)GetDouble(value, startIndex);
+            if (typeof(T) == typeof(int)) return (T)(object)GetInt(value, startIndex);
+            if (typeof(T) == typeof(uint)) return (T)(object)GetUInt(value, startIndex);
+            if (typeof(T) == typeof(long)) return (T)(object)GetLong(value, startIndex);
+            if (typeof(T) == typeof(ulong)) return (T)(object)GetULong(value, startIndex);
+            if (typeof(T) == typeof(short)) return (T)(object)GetShort(value, startIndex);
+            if (typeof(T) == typeof(ushort)) return (T)(object)GetUShort(value, startIndex);
+            if (typeof(T) == typeof(string)) return (T)(object)GetString(value, startIndex);
+            throw new DataException(&quot;Provided type ({0}) cannot be deserialized from given value. You must provide a valuetype (except struct and enum) or a string&quot;);
+        }
+
+        //TODO: Need to handle endianness. All information is encoded in little-endian style
+        #region private getters
+
+        private static bool DetermineIfLittleEndian()
+        {
+            var test = T2B.ToBytes(&#39;a&#39;);
+            var result = Convert.ToChar((test[0] | test[1] &lt;&lt; 8));
+            return (result == &#39;a&#39;);
+        }
+
+        private static bool GetBool(byte[] value, int startIndex)
+        {
+            if (value == null) throw new ArgumentNullException(&quot;value&quot;);
+            if (value.Length != sizeof(bool)) throw new DataException(&quot;Provided data does not appear to be of type bool&quot;);
+            HandleEndianness(value);
+            return (value.First() != 0);
+        }
+
+        private static byte GetByte(byte[] value, int startIndex)
+        {
+            if (value == null) throw new ArgumentNullException(&quot;value&quot;);
+            if (value.Length != sizeof(byte)) throw new DataException(&quot;Provided data does not appear to be of type byte&quot;);
+            HandleEndianness(value);
+            return value.First();
+        }
+
+        private static sbyte GetSByte(byte[] value, int startIndex)
+        {
+            if (value == null) throw new ArgumentNullException(&quot;value&quot;);
+            if (value.Length != sizeof(sbyte)) throw new DataException(&quot;Provided data does not appear to be of type sbyte&quot;);
+            HandleEndianness(value);
+            return (sbyte)value.First();
+        }
+
+        private static char GetChar(byte[] value, int startIndex)
+        {
+            if (value == null) throw new ArgumentNullException(&quot;value&quot;);
+            if (value.Length != (sizeof(char) + startIndex)) throw new DataException(&quot;Provided data does not appear to be of type char&quot;);
+            HandleEndianness(value);
+            var charArray = new char[1];
+            Buffer.BlockCopy(value, startIndex, charArray, 0, sizeof(char));
+            return charArray[0];
+            //var c = Convert.ToChar((value[0] | value[1] &lt;&lt; 8));
+            //return c &gt;&gt;= startIndex;
+        }
+
+        private static float GetFloat(byte[] value, int startIndex)
+        {
+            if (value == null) throw new ArgumentNullException(&quot;value&quot;);
+            if (value.Length != (sizeof(float) + startIndex)) throw new DataException(&quot;Provided data does not appear to be of type float&quot;);
+            HandleEndianness(value);
+            var floatArray = new float[1];
+            Buffer.BlockCopy(value, startIndex, floatArray, 0, sizeof(float));
+            return floatArray[0];
+        }
+
+        private static double GetDouble(byte[] value, int startIndex)
+        {
+            if (value == null) throw new ArgumentNullException(&quot;value&quot;);
+            if (value.Length != (sizeof(double) + startIndex)) throw new DataException(&quot;Provided data does not appear to be of type double&quot;);
+            HandleEndianness(value);
+            var doubleArray = new double[1];
+            Buffer.BlockCopy(value, startIndex, doubleArray, 0, sizeof(double));
+            return doubleArray[0];
+        }
+
+        private static int GetInt(byte[] value, int startIndex)
+        {
+            if (value == null) throw new ArgumentNullException(&quot;value&quot;);
+            if (value.Length != (sizeof(int) + startIndex)) throw new DataException(&quot;Provided data does not appear to be of type int&quot;);
+            HandleEndianness(value);
+            var intArray = new int[1];
+            Buffer.BlockCopy(value, startIndex, intArray, 0, sizeof(int));
+            return intArray[0];
+        }
+
+        private static uint GetUInt(byte[] value, int startIndex)
+        {
+            if (value == null) throw new ArgumentNullException(&quot;value&quot;);
+            if (value.Length != sizeof(uint)) throw new DataException(&quot;Provided data does not appear to be of type uint&quot;);
+            HandleEndianness(value);
+            return Convert.ToUInt32((value[0] &lt;&lt; 0) | (value[1] &lt;&lt; 8) | (value[2] &lt;&lt; 16) | (value[3] &lt;&lt; 24));
+        }
+
+        private static long GetLong(byte[] value, int startIndex)
+        {
+            if (value == null) throw new ArgumentNullException(&quot;value&quot;);
+            if (value.Length != sizeof(long)) throw new DataException(&quot;Provided data does not appear to be of type long&quot;);
+            HandleEndianness(value);
+            return Convert.ToInt64((value[0] &lt;&lt; 0) | (value[1] &lt;&lt; 8) | (value[2] &lt;&lt; 16) | (value[3] &lt;&lt; 24 | value[4] &lt;&lt; 32) | (value[5] &lt;&lt; 40) | (value[6] &lt;&lt; 48) | (value[7] &lt;&lt; 56));
+        }
+
+        private static ulong GetULong(byte[] value, int startIndex)
+        {
+            if (value == null) throw new ArgumentNullException(&quot;value&quot;);
+            if (value.Length != sizeof(ulong)) throw new DataException(&quot;Provided data does not appear to be of type ulong&quot;);
+            HandleEndianness(value);
+            return Convert.ToUInt64((value[0] &lt;&lt; 0) | (value[1] &lt;&lt; 8) | (value[2] &lt;&lt; 16) | (value[3] &lt;&lt; 24 | value[4] &lt;&lt; 32) | (value[5] &lt;&lt; 40) | (value[6] &lt;&lt; 48) | (value[7] &lt;&lt; 56));
+        }
+
+        private static short GetShort(byte[] value, int startIndex)
+        {
+            if (value == null) throw new ArgumentNullException(&quot;value&quot;);
+            if (value.Length != sizeof(ulong)) throw new DataException(&quot;Provided data does not appear to be of type ulong&quot;);
+            HandleEndianness(value);
+            return Convert.ToInt16((value[0] &lt;&lt; 0) | (value[1] &lt;&lt; 8));
+        }
+
+        private static ushort GetUShort(byte[] value, int startIndex)
+        {
+            if (value == null) throw new ArgumentNullException(&quot;value&quot;);
+            if (value.Length != sizeof(ulong)) throw new DataException(&quot;Provided data does not appear to be of type ulong&quot;);
+            HandleEndianness(value);
+            return Convert.ToUInt16((value[0] &lt;&lt; 0) | (value[1] &lt;&lt; 8));
+        }
+
+        private static string GetString(byte[] value, int startIndex)
+        {
+            var sb = new StringBuilder();
+            HandleEndianness(value);
+            foreach (var @char in value)
+            {
+                sb.Append(@char);
+            }
+            return sb.ToString();
+        }
+
+        private static void HandleEndianness(byte[] byteArray)
+        {
+            if (!IsLittleEndian) Array.Reverse(byteArray);
+        }
+        #endregion
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,9,15,10,1],[16,13,16,56,1],[17,9,17,10,1],[20,9,20,10,1],[21,13,21,43,1],[22,13,22,43,1],[23,13,23,44,1],[24,13,24,43,1],[24,44,24,89,1],[25,13,25,44,1],[25,45,25,91,1],[26,13,26,45,1],[26,46,26,93,1],[27,13,27,42,1],[27,43,27,87,1],[35,9,35,10,1],[41,9,41,10,1],[42,13,42,41,1],[43,13,43,67,1],[44,13,44,36,1],[45,9,45,10,1],[72,9,72,10,1],[73,13,73,31,1],[73,32,73,73,1],[74,13,74,61,1],[74,62,74,138,1],[75,13,75,37,1],[76,13,76,41,1],[77,13,77,77,1],[78,13,78,33,1],[81,9,81,10,1],[84,9,84,10,1],[85,13,85,31,1],[85,32,85,73,1],[86,13,86,62,1],[86,63,86,140,1],[87,13,87,37,1],[88,13,88,43,1],[89,13,89,79,1],[90,13,90,34,1],[91,9,91,10,1],[94,9,94,10,1],[95,13,95,31,1],[95,32,95,73,1],[96,13,96,63,1],[96,64,96,142,1],[97,13,97,37,1],[98,13,98,45,1],[99,13,99,81,1],[100,13,100,35,1],[101,9,101,10,1],[104,9,104,10,1],[105,13,105,31,1],[105,32,105,73,1],[106,13,106,60,1],[106,61,106,136,1],[107,13,107,37,1],[108,13,108,39,1],[109,13,109,75,1],[110,13,110,32,1],[111,9,111,10,1],[165,9,165,10,1],[166,13,166,33,1],[167,9,167,10,1],[21,44,21,89,0],[22,44,22,89,0],[23,45,23,91,0],[28,13,28,43,0],[28,44,28,89,0],[29,13,29,43,0],[29,44,29,89,0],[30,13,30,44,0],[30,45,30,91,0],[31,13,31,44,0],[31,45,31,91,0],[32,13,32,45,0],[32,46,32,93,0],[33,13,33,45,0],[33,46,33,93,0],[34,13,34,167,0],[48,9,48,10,0],[49,13,49,31,0],[49,32,49,73,0],[50,13,50,46,0],[50,47,50,123,0],[51,13,51,37,0],[52,13,52,41,0],[53,9,53,10,0],[56,9,56,10,0],[57,13,57,31,0],[57,32,57,73,0],[58,13,58,46,0],[58,47,58,123,0],[59,13,59,37,0],[60,13,60,34,0],[61,9,61,10,0],[64,9,64,10,0],[65,13,65,31,0],[65,32,65,73,0],[66,13,66,47,0],[66,48,66,125,0],[67,13,67,37,0],[68,13,68,41,0],[69,9,69,10,0],[114,9,114,10,0],[115,13,115,31,0],[115,32,115,73,0],[116,13,116,46,0],[116,47,116,123,0],[117,13,117,37,0],[118,13,118,110,0],[119,9,119,10,0],[122,9,122,10,0],[123,13,123,31,0],[123,32,123,73,0],[124,13,124,46,0],[124,47,124,123,0],[125,13,125,37,0],[126,13,126,183,0],[127,9,127,10,0],[130,9,130,10,0],[131,13,131,31,0],[131,32,131,73,0],[132,13,132,47,0],[132,48,132,125,0],[133,13,133,37,0],[134,13,134,184,0],[135,9,135,10,0],[138,9,138,10,0],[139,13,139,31,0],[139,32,139,73,0],[140,13,140,47,0],[140,48,140,125,0],[141,13,141,37,0],[142,13,142,71,0],[143,9,143,10,0],[146,9,146,10,0],[147,13,147,31,0],[147,32,147,73,0],[148,13,148,47,0],[148,48,148,125,0],[149,13,149,37,0],[150,13,150,72,0],[151,9,151,10,0],[154,9,154,10,0],[155,13,155,42,0],[156,13,156,37,0],[157,13,157,20,0],[157,35,157,40,0],[157,22,157,31,0],[158,13,158,14,0],[159,17,159,34,0],[160,13,160,14,0],[157,32,157,34,0],[161,13,161,34,0],[162,9,162,10,0],[166,34,166,59,0]]);
+    </script>
+  </body>
+</html>
