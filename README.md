@@ -41,8 +41,8 @@ Good choice! Usage is extremely simple:
 			
 
 			//Lets get some valuetypes from their arrays
-			short s = B2T.Get<short>(aByteArray);
-			int i = B2T.Get<int>(anotherByteArray);
+			short s = B2T.Get<short>(aByteArray, someOffset);  //The offset is an optional
+				int i = B2T.Get<int>(anotherByteArray);	   //parameter and defaults to zero
 		}
 	}
 	
