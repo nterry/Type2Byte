@@ -1,7 +1,7 @@
 Type2Byte
 =========
 
-[![Build status](https://ci.appveyor.com/api/projects/status?id=1kikr01m0cg5rpy6)](https://ci.appveyor.com/project/type2byte)
+[![Build status](https://ci.appveyor.com/api/projects/status?id=1kikr01m0cg5rpy6)](https://ci.appveyor.com/project/type2byte)&nbsp;&nbsp;&nbsp;&nbsp;[![NuGet version](https://badge.fury.io/nu/Type2Byte.png)](http://badge.fury.io/nu/Type2Byte)
 
 A class for converting managed integral types to byte arrays and vice versa
 
